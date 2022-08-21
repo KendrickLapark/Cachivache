@@ -12,11 +12,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class LaminaLogin extends JPanel{
+	
+	private MarcoLogin marcoLogin;
 
-	public LaminaLogin() {
-		
+	public LaminaLogin(MarcoLogin marcoLogin) {
 		
 		setLayout(new BorderLayout());
+		
+		this.marcoLogin = marcoLogin;
 		
 		JButton jButton1 = new JButton("Siguiente");
 		JButton jButton2 = new JButton("Cancelar");
@@ -46,7 +49,7 @@ public class LaminaLogin extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-				MarcoRegistro marcoRegistro = new MarcoRegistro();
+				MarcoRegistro marcoRegistro = new MarcoRegistro(marcoLogin);
 				setVisible(false);
 				
 			}

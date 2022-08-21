@@ -12,7 +12,7 @@ public class MarcoLogin extends JFrame{
 		
 		setTitle("Login Screen");
 		
-		LaminaLogin laminaLogin = new LaminaLogin();
+		LaminaLogin laminaLogin = new LaminaLogin(this);
 		
 		add(laminaLogin);
 		
