@@ -4,6 +4,12 @@ import javax.swing.JFrame;
 
 public class MarcoRegistro extends JFrame{
 
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 4089193305549219358L;
+
 	public MarcoRegistro(MarcoLogin marcoLogin) {
 		
 		setBounds(700,300,580,600);
@@ -12,7 +18,7 @@ public class MarcoRegistro extends JFrame{
 		
 		setTitle("Pantalla de registro");
 		
-		LaminaRegistro laminaRegistro = new LaminaRegistro(this);
+		LaminaRegistro laminaRegistro = new LaminaRegistro();
 		
 		add(laminaRegistro);
 		

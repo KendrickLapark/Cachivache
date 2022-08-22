@@ -13,6 +13,12 @@ import javax.swing.event.DocumentListener;
 
 public class LaminaLogin extends JPanel{
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 3867310747348620946L;
+	
 	private MarcoLogin marcoLogin;
 
 	public LaminaLogin(MarcoLogin marcoLogin) {

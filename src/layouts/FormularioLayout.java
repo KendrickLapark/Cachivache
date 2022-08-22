@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
-import java.util.Iterator;
 
 public class FormularioLayout implements LayoutManager{
 
@@ -42,9 +41,7 @@ public class FormularioLayout implements LayoutManager{
 		int contador = 0;
 		
 		int n = parent.getComponentCount();
-		
-		System.out.println("Componentes del FormularioLayout: "+parent.getComponentCount());
-		
+				
 		for (int i = 0; i < n; i++) {
 			
 			contador++;

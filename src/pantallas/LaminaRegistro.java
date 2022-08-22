@@ -7,26 +7,34 @@ import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.Date;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import layouts.FormularioLayout;
 
+/*
+ * 
+ */
+
 public class LaminaRegistro extends JPanel{
 	
-	private MarcoRegistro marcoRegistro;
-	private String dia, mes, año;
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 1830945354837387527L;
+	
+	private int dia, mes, año;
+	private int diasMesAnterior, diasAEliminar;
+	
+	private String [] datos =  {"Nombre", "Apellidos", "Fecha de nacimiento","Localidad","Provincia","País","Domicilio",
+			"Nombre de usuario", "Contraseña", "Confirmación"};;
 
-	public LaminaRegistro(MarcoRegistro marcoRegistro) {
-
-		this.marcoRegistro = marcoRegistro;
-		
-		dia = "1";
-		mes = "1";
-		año = "1900";
+	public LaminaRegistro() {
+	
+		dia = 1;
+		mes = 1;
+		año = 1900;				
+		diasAEliminar = 0;
 		
 		setLayout(new BorderLayout());
 		
@@ -63,13 +71,12 @@ public class LaminaRegistro extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				marcoRegistro.setVisible(false);
 			}
 		});
 		
 		JTextField jTextField1 = new JTextField();
 		JTextField jTextField2 = new JTextField();
-		JTextField jTextField3 = new JTextField("01/01/1900");
+		JTextField jTextField3 = new JTextField(getFecha(1,1,1900));
 		JTextField jTextField4 = new JTextField();
 		JTextField jTextField5 = new JTextField();
 		JTextField jTextField6 = new JTextField();
@@ -80,62 +87,9 @@ public class LaminaRegistro extends JPanel{
 		
 		jTextField3.setFocusable(false);
 		
-		JComboBox jComboBox1 = new JComboBox();
-		JComboBox jComboBox2 = new JComboBox();
-		JComboBox jComboBox3 = new JComboBox();
-		
-		jComboBox1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-				System.out.println("Día seleccionados: "+jComboBox1.getSelectedItem());
-
-				dia = jComboBox1.getSelectedItem().toString();
-				
-				jTextField3.setText(getFecha(dia, mes, año));
-				
-			
-			}
-		});
-		
-		jComboBox2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-				System.out.println("Mes seleccionados: "+jComboBox2.getSelectedItem());
-				
-				mes = 0+jComboBox2.getSelectedItem().toString();
-				
-				jTextField3.setText(getFecha(dia, mes, año));
-				
-				getDíasDelMes(mes, año);
-				
-				System.out.println("Días de febrero del año seleccionado "+getDíasDelMes(mes, año));
-			}
-		});
-
-		jComboBox3.addActionListener(new ActionListener() {
-	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-				System.out.println("Año seleccionados: "+jComboBox3.getSelectedItem());
-				
-				año = jComboBox3.getSelectedItem().toString();
-				
-				jTextField3.setText(getFecha(dia, mes, año));
-				
-				getDíasDelMes(mes, año);
-				
-				System.out.println("Días de febrero del año seleccionado "+getDíasDelMes(mes, año));
-
-			}
-		});
+		JComboBox<Integer> jComboBox1 = new JComboBox<Integer>();
+		JComboBox<Integer> jComboBox2 = new JComboBox<Integer>();
+		JComboBox<Integer> jComboBox3 = new JComboBox<Integer>();
 		
 		for (int i = 1; i <= 31; i++) {
 			jComboBox1.addItem(i);
@@ -147,6 +101,84 @@ public class LaminaRegistro extends JPanel{
 		for(int i = 1900; i <= 2022; i++) {
 			jComboBox3.addItem(i);
 		}
+		
+		diasMesAnterior = jComboBox1.getItemCount();
+		
+		jComboBox1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+								
+				dia = Integer.parseInt(jComboBox1.getSelectedItem().toString());
+							
+				jTextField3.setText(getFecha(dia, mes, año));				
+			
+			}
+		});
+		
+		
+		jComboBox2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+										
+				diasMesAnterior = jComboBox1.getItemCount();				
+				
+				mes = Integer.parseInt(jComboBox2.getSelectedItem().toString());
+				
+				jTextField3.setText(getFecha(dia, mes, año));
+								 
+				int diasMes=getDíasDelMes(mes, año);
+				
+				diasAEliminar = diasMesAnterior - diasMes;
+				
+				if(diasAEliminar > 0) {
+					for(int i = 1; i <= diasAEliminar; i++) {
+						jComboBox1.removeItemAt(jComboBox1.getItemCount()-1);
+					}
+				}else {
+					System.out.println(-diasAEliminar);
+					
+					for(int i = 1; i <= -diasAEliminar; i++) {
+						jComboBox1.addItem(jComboBox1.getItemCount()+1);
+					}
+				}
+
+			}
+		});
+
+		jComboBox3.addActionListener(new ActionListener() {
+	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub				
+				
+				diasMesAnterior = jComboBox1.getItemCount();
+				
+				año = Integer.parseInt(jComboBox3.getSelectedItem().toString());
+				
+				int diasMes=getDíasDelMes(mes, año);
+				
+				diasAEliminar = diasMesAnterior - diasMes;
+				
+				jTextField3.setText(getFecha(dia, mes, año));									
+												
+				if(diasAEliminar > 0) {
+					for(int i = 1; i <= diasAEliminar; i++) {
+						jComboBox1.removeItemAt(jComboBox1.getItemCount()-1);
+					}
+				}else {
+					System.out.println(-diasAEliminar);
+					
+					for(int i = 1; i <= -diasAEliminar; i++) {
+						jComboBox1.addItem(jComboBox1.getItemCount()+1);
+					}
+				}
+
+			}
+		});
 		
 		jPanel1.add(jLabel1);
 		jPanel1.add(jTextField1);
@@ -175,55 +207,75 @@ public class LaminaRegistro extends JPanel{
 		jPanel2.add(jButton1);
 		jPanel2.add(jButton2);
 		
+		System.out.println("Haber"+jComboBox1.getItemCount());
+		
 		add(jPanel1, BorderLayout.CENTER);
 		add(jPanel2, BorderLayout.SOUTH);
 		
 		jTextField3.setText(getFecha(dia, mes, año));
 		
-		System.out.println(jComboBox1.getSelectedItem());
 		
 	}
 	
-	public int getDíasDelMes(String mes, String año) {
+	public int getDíasDelMes(int mes, int año) {
 		
 		int diasMes = 0;
 		
 		Date date = new Date();
 		
-		String fechaAEvaluar = new SimpleDateFormat("01/"+mes+"/"+año).format(date);
+		String fechaAEvaluar = new SimpleDateFormat("01/0"+mes+"/"+año).format(date);
 		
-		int dia = Integer.parseInt(fechaAEvaluar.substring(0, 2));
 		int mesAEvaluar = Integer.parseInt(fechaAEvaluar.substring(3, 5));
-		int añoAEvaluar = Integer.parseInt(fechaAEvaluar.substring(6, 10));
+		int añoAEvaluar = Integer.parseInt(fechaAEvaluar.substring(7, 10));
 		
 		YearMonth yearMonth = YearMonth.of(añoAEvaluar, mesAEvaluar);
 		
 		diasMes = yearMonth.lengthOfMonth();
 		
-		System.out.println("Días del mes : "+mes+" "+diasMes);
-		
 		return diasMes;
 		
 	}
 	
-	public String getFecha(String dias, String mes, String año) {
+	public String getFecha(int dias, int mes, int año) {
 		
 		String fecha = "";
 		
-		if(Integer.parseInt(dias)<10) {
-
-			fecha = "0"+dias+"/"+mes+"/"+año;
-		}else {
-			if(Integer.parseInt(mes)<10) {
+		if(dias<10) {
+			if(mes<10) {
+				fecha = "0"+dias+"/0"+mes+"/"+año;
+			}else {
+				fecha = "0"+dias+"/"+mes+"/"+año;
+			}		
+		}else {	
+			if(mes<10) {
 				fecha = dias+"/0"+mes+"/"+año;
-
 			}else {
 				fecha = dias+"/"+mes+"/"+año;
+			}
+			
+		}		
+			
+		return fecha;						
+		
+	}
+	
+	//Completar para simplificar el codigo
+	
+	public void iniciarComponentes(String datos) {
+		
+		for (String string : this.datos) {
+			JLabel jLabel = new JLabel(string);
+		}
+		
+		for (int i = 0; i < 11; i++) {
+			
+			if(i==3) {
+				JTextField jTextField = new JTextField("01/01/1900");
+			}else {
+				JTextField jTextField = new JTextField();
 
 			}
 		}
-		
-		return fecha;						
 		
 	}
 	
