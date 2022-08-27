@@ -5,7 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.swing.*;
 
@@ -17,17 +22,17 @@ import layouts.FormularioLayout;
 
 public class LaminaRegistro extends JPanel{
 	
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 1830945354837387527L;
 	
-	private int dia, mes, año;
+	private int dia, mes, año, cuentaPuntos;
 	private int diasMesAnterior, diasAEliminar;
 	
+	private boolean correoCorrecto;
+	
+	private JPanel jPanel1, jPanel2;
+	
 	private String [] datos =  {"Nombre", "Apellidos", "Fecha de nacimiento","Localidad","Provincia","País","Domicilio",
-			"Nombre de usuario", "Contraseña", "Confirmación"};;
+			"Nombre de usuario", "Contraseña", "Confirmación"};
 
 	public LaminaRegistro() {
 	
@@ -38,11 +43,11 @@ public class LaminaRegistro extends JPanel{
 		
 		setLayout(new BorderLayout());
 		
-		JPanel jPanel1 = new JPanel();
-		JPanel jPanel2 = new JPanel();
+		jPanel1 = new JPanel();
+		jPanel2 = new JPanel();
 		
-		jPanel1.setLayout(new FormularioLayout());
-				
+		jPanel1.setLayout(new FormularioLayout());				
+		
 		JLabel jLabel1 = new JLabel("Nombre");
 		JLabel jLabel2 = new JLabel("Apellidos");
 		JLabel jLabel3 = new JLabel("Fecha de nacimiento");
@@ -50,29 +55,13 @@ public class LaminaRegistro extends JPanel{
 		JLabel jLabel5 = new JLabel("Provincia");
 		JLabel jLabel6 = new JLabel("País");
 		JLabel jLabel7 = new JLabel("Domicilio");
-		JLabel jLabel8 = new JLabel("Nombre de usuario");
-		JLabel jLabel9 = new JLabel("Contraseña");
-		JLabel jLabel10 = new JLabel("Confirmación");
+		JLabel jLabel8 = new JLabel("Correo electrónico");
+		JLabel jLabel9 = new JLabel("Nombre de usuario");
+		JLabel jLabel10 = new JLabel("Contraseña");
+		JLabel jLabel11 = new JLabel("Confirmación");
 		
 		JButton jButton1 = new JButton("Aceptar");
 		JButton jButton2 = new JButton("Cancelar");
-		
-		jButton1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
-		jButton2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-			}
-		});
 		
 		JTextField jTextField1 = new JTextField();
 		JTextField jTextField2 = new JTextField();
@@ -84,8 +73,41 @@ public class LaminaRegistro extends JPanel{
 		JTextField jTextField8 = new JTextField();
 		JTextField jTextField9 = new JTextField();
 		JTextField jTextField10 = new JTextField();
+		JTextField jTextField11 = new JTextField();
 		
 		jTextField3.setFocusable(false);
+		
+		jButton1.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						
+						if(validaCorreo(jTextField8.getText())) {
+							System.out.println("Correo electrónico válido.");
+						}else {
+							System.out.println("Correo electrónico no válido.");
+						}
+						
+						if(validaEntrada(jTextField1.getText())) {
+							
+						}else {
+							
+						}
+						
+					}
+				});
+		
+		jButton2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+				System.exit(0);
+			}
+			
+		});
 		
 		JComboBox<Integer> jComboBox1 = new JComboBox<Integer>();
 		JComboBox<Integer> jComboBox2 = new JComboBox<Integer>();
@@ -115,8 +137,7 @@ public class LaminaRegistro extends JPanel{
 				jTextField3.setText(getFecha(dia, mes, año));				
 			
 			}
-		});
-		
+		});		
 		
 		jComboBox2.addActionListener(new ActionListener() {
 			
@@ -179,7 +200,7 @@ public class LaminaRegistro extends JPanel{
 
 			}
 		});
-		
+			
 		jPanel1.add(jLabel1);
 		jPanel1.add(jTextField1);
 		jPanel1.add(jLabel2);		
@@ -203,18 +224,17 @@ public class LaminaRegistro extends JPanel{
 		jPanel1.add(jTextField9);
 		jPanel1.add(jLabel10);
 		jPanel1.add(jTextField10);
-		
+		jPanel1.add(jLabel11);
+		jPanel1.add(jTextField11);
+				
 		jPanel2.add(jButton1);
 		jPanel2.add(jButton2);
-		
-		System.out.println("Haber"+jComboBox1.getItemCount());
 		
 		add(jPanel1, BorderLayout.CENTER);
 		add(jPanel2, BorderLayout.SOUTH);
 		
 		jTextField3.setText(getFecha(dia, mes, año));
-		
-		
+				
 	}
 	
 	public int getDíasDelMes(int mes, int año) {
@@ -259,24 +279,120 @@ public class LaminaRegistro extends JPanel{
 		
 	}
 	
-	//Completar para simplificar el codigo
-	
-	public void iniciarComponentes(String datos) {
+public boolean validaCorreo(String correo) {
+						
+		String prefijo = "";
 		
-		for (String string : this.datos) {
-			JLabel jLabel = new JLabel(string);
-		}
-		
-		for (int i = 0; i < 11; i++) {
+		if(!correo.contains("@") || !correo.contains(".") || correo.length() < 13) {
+			System.out.println("Correo incorrecto. No es un correo electrónico.");
 			
-			if(i==3) {
-				JTextField jTextField = new JTextField("01/01/1900");
-			}else {
-				JTextField jTextField = new JTextField();
-
+			return correoCorrecto = false;
+			
+		}else {
+			
+			int posicionArroba = correo.indexOf('@');
+			
+			prefijo = correo.substring(0, correo.indexOf('@'));
+			
+			String dominio =(String) correo.subSequence(posicionArroba+1, correo.length());
+			
+			if(prefijo.length()<8) {
+				
+				System.out.println("Error. La dirección debe tener al menos 8 caracteres de longitud.");
+				
+				return correoCorrecto = false;
 			}
-		}
+			
+			cuentaPuntos = 0;
+			
+			if(dominio.length()<4) {
+				
+				System.out.println("Error. El dominio no se encuentra.");
+				
+				return correoCorrecto = false;
+				
+			}else {
+				
+				cuentaPuntos = 0;
+							
+				for (int i = 0; i < dominio.length(); i++) {
+					
+					String muestraDominio = Character.toString(dominio.charAt(i));
+					
+					if(muestraDominio.equals(".")) {
+						
+						cuentaPuntos++;									
+						
+						if(dominio.indexOf(".") < 1 || dominio.indexOf(".") >= (dominio.length()-2)) {
+							
+							System.out.println("Error, el punto esta mal colocado. "
+									+ "No puede situarse al principio ni al final del dominio.");
+							
+							return correoCorrecto = false;
+														
+						}
+						
+					}
+					
+				}
+				
+				if(cuentaPuntos != 1) {
+					
+					System.out.println("Dominio incorrecto.");
+					
+					return correoCorrecto = false;
+				}
+				
+			}
+			
+			String prohibidos = "()<>@,;:\"[]ç%&";				
+			
+			for (int i = 0; i < prefijo.length(); i++) {
+				
+				String muestra = Character.toString(correo.charAt(i));
+				
+				for (int j = 0; j < prohibidos.length(); j++) {
+					
+					if(muestra.equals(Character.toString(prohibidos.charAt(j)))) {
+						
+						System.out.println("Error, carácteres prohibidos. "
+								+ "La dirección de correo no puede contener los siguientes caracteres: "+prohibidos);
+						
+						return correoCorrecto = false;
+					}
+					
+				}
+			}			
+			
+			System.out.println("Correo correcto.");
+			
+			return correoCorrecto = true;
+		}		
 		
 	}
-	
+
+	public boolean validaEntrada(String entrada) {
+		
+		String prohibidos = "1234567890ºª@·#~$%&¬()='?¡¿`^+*´¨_.:,;¨{}[]€<>";
+		
+		for (int i = 0; i < entrada.length(); i++) {
+			
+			String muestra = Character.toString(entrada.charAt(i));
+			
+			for (int j = 0; j < prohibidos.length(); j++) {
+				
+				if(muestra.equals(Character.toString(prohibidos.charAt(j)))) {
+					
+					System.out.println("Error, entrada incorrecta.");
+					
+					return correoCorrecto = false;
+				}
+				
+			}
+			
+		}
+		
+		return true;
+	}
+
 }
