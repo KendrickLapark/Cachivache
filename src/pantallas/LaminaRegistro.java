@@ -31,7 +31,9 @@ public class LaminaRegistro extends JPanel{
 	
 	private JPanel jPanel1, jPanel2;
 	
-	private String [] datos =  {"Nombre", "Apellidos", "Fecha de nacimiento","Localidad","Provincia","País","Domicilio",
+	private ArrayList <JComponent> componentes;
+	
+	private String [] campos =  {"Nombre", "Apellidos", "Fecha de nacimiento","Localidad","Provincia","País","Domicilio",
 			"Nombre de usuario", "Contraseña", "Confirmación"};
 
 	public LaminaRegistro() {
@@ -41,74 +43,15 @@ public class LaminaRegistro extends JPanel{
 		año = 1900;				
 		diasAEliminar = 0;
 		
+		componentes = new ArrayList<>();
+		
 		setLayout(new BorderLayout());
 		
 		jPanel1 = new JPanel();
 		jPanel2 = new JPanel();
 		
-		jPanel1.setLayout(new FormularioLayout());				
-		
-		JLabel jLabel1 = new JLabel("Nombre");
-		JLabel jLabel2 = new JLabel("Apellidos");
-		JLabel jLabel3 = new JLabel("Fecha de nacimiento");
-		JLabel jLabel4 = new JLabel("Localidad");
-		JLabel jLabel5 = new JLabel("Provincia");
-		JLabel jLabel6 = new JLabel("País");
-		JLabel jLabel7 = new JLabel("Domicilio");
-		JLabel jLabel8 = new JLabel("Correo electrónico");
-		JLabel jLabel9 = new JLabel("Nombre de usuario");
-		JLabel jLabel10 = new JLabel("Contraseña");
-		JLabel jLabel11 = new JLabel("Confirmación");
-		
-		JButton jButton1 = new JButton("Aceptar");
-		JButton jButton2 = new JButton("Cancelar");
-		
-		JTextField jTextField1 = new JTextField();
-		JTextField jTextField2 = new JTextField();
-		JTextField jTextField3 = new JTextField(getFecha(1,1,1900));
-		JTextField jTextField4 = new JTextField();
-		JTextField jTextField5 = new JTextField();
-		JTextField jTextField6 = new JTextField();
-		JTextField jTextField7 = new JTextField();
-		JTextField jTextField8 = new JTextField();
-		JTextField jTextField9 = new JTextField();
-		JTextField jTextField10 = new JTextField();
-		JTextField jTextField11 = new JTextField();
-		
-		jTextField3.setFocusable(false);
-		
-		jButton1.addActionListener(new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						// TODO Auto-generated method stub
-						
-						if(validaCorreo(jTextField8.getText())) {
-							System.out.println("Correo electrónico válido.");
-						}else {
-							System.out.println("Correo electrónico no válido.");
-						}
-						
-						if(validaEntrada(jTextField1.getText())) {
-							
-						}else {
-							
-						}
-						
-					}
-				});
-		
-		jButton2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-				System.exit(0);
-			}
-			
-		});
-		
+		jPanel1.setLayout(new FormularioLayout());								
+
 		JComboBox<Integer> jComboBox1 = new JComboBox<Integer>();
 		JComboBox<Integer> jComboBox2 = new JComboBox<Integer>();
 		JComboBox<Integer> jComboBox3 = new JComboBox<Integer>();
@@ -126,6 +69,24 @@ public class LaminaRegistro extends JPanel{
 		
 		diasMesAnterior = jComboBox1.getItemCount();
 		
+		iniciaComponentes(campos, 0, 2);
+		
+		componentes.add(new JLabel(campos[2]));
+		
+		componentes.add(jComboBox1);
+		componentes.add(jComboBox2);
+		componentes.add(jComboBox3);
+		
+		componentes.add(new JTextField());
+		
+		iniciaComponentes(campos, 3, 10);
+		
+		
+		
+		JTextField jTextFieldFecha = (JTextField) componentes.get(8);
+		
+		jTextFieldFecha.setFocusable(false);
+		
 		jComboBox1.addActionListener(new ActionListener() {
 			
 			@Override
@@ -133,8 +94,8 @@ public class LaminaRegistro extends JPanel{
 				// TODO Auto-generated method stub
 								
 				dia = Integer.parseInt(jComboBox1.getSelectedItem().toString());
-							
-				jTextField3.setText(getFecha(dia, mes, año));				
+				
+				jTextFieldFecha.setText(getFecha(dia, mes, año));
 			
 			}
 		});		
@@ -149,7 +110,7 @@ public class LaminaRegistro extends JPanel{
 				
 				mes = Integer.parseInt(jComboBox2.getSelectedItem().toString());
 				
-				jTextField3.setText(getFecha(dia, mes, año));
+				jTextFieldFecha.setText(getFecha(dia, mes, año));
 								 
 				int diasMes=getDíasDelMes(mes, año);
 				
@@ -183,8 +144,8 @@ public class LaminaRegistro extends JPanel{
 				int diasMes=getDíasDelMes(mes, año);
 				
 				diasAEliminar = diasMesAnterior - diasMes;
-				
-				jTextField3.setText(getFecha(dia, mes, año));									
+
+				jTextFieldFecha.setText(getFecha(dia, mes, año));									
 												
 				if(diasAEliminar > 0) {
 					for(int i = 1; i <= diasAEliminar; i++) {
@@ -200,40 +161,54 @@ public class LaminaRegistro extends JPanel{
 
 			}
 		});
+		
+		
+		for (JComponent c : componentes) {
+			jPanel1.add(c);
+		}
+		
+		JButton jButton1 = new JButton("Aceptar");
+		JButton jButton2 = new JButton("Cancelar");		
+		
+		jButton1.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						
+						/*if(validaCorreo(jTextField8.getText())) {
+							System.out.println("Correo electrónico válido.");
+						}else {
+							System.out.println("Correo electrónico no válido.");
+						}
+						
+						if(validaEntrada(jTextField1.getText())) {
+							
+						}else {
+							
+						}*/
+						
+					}
+				});
+		
+		jButton2.addActionListener(new ActionListener() {
 			
-		jPanel1.add(jLabel1);
-		jPanel1.add(jTextField1);
-		jPanel1.add(jLabel2);		
-		jPanel1.add(jTextField2);
-		jPanel1.add(jLabel3);
-		jPanel1.add(jComboBox1);
-		jPanel1.add(jComboBox2);
-		jPanel1.add(jComboBox3);
-		jPanel1.add(jTextField3);
-		jPanel1.add(jLabel4); 
-		jPanel1.add(jTextField4);
-		jPanel1.add(jLabel5);
-		jPanel1.add(jTextField5);
-		jPanel1.add(jLabel6);
-		jPanel1.add(jTextField6);
-		jPanel1.add(jLabel7);
-		jPanel1.add(jTextField7);
-		jPanel1.add(jLabel8);
-		jPanel1.add(jTextField8);
-		jPanel1.add(jLabel9);
-		jPanel1.add(jTextField9);
-		jPanel1.add(jLabel10);
-		jPanel1.add(jTextField10);
-		jPanel1.add(jLabel11);
-		jPanel1.add(jTextField11);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
 				
+				System.exit(0);
+			}
+			
+		});
+							
 		jPanel2.add(jButton1);
 		jPanel2.add(jButton2);
 		
 		add(jPanel1, BorderLayout.CENTER);
 		add(jPanel2, BorderLayout.SOUTH);
 		
-		jTextField3.setText(getFecha(dia, mes, año));
+		jTextFieldFecha.setText(getFecha(dia, mes, año));
 				
 	}
 	
@@ -393,6 +368,18 @@ public boolean validaCorreo(String correo) {
 		}
 		
 		return true;
+	}
+	
+	private void iniciaComponentes(String [] campos, int inicio, int fin) {
+		
+		for (int i = inicio; i < fin; i++) {
+			JLabel jLabel = new JLabel(campos[i]);
+			JTextField jTextField = new JTextField();
+			
+			componentes.add(jLabel);
+			componentes.add(jTextField);
+		}
+		
 	}
 
 }
