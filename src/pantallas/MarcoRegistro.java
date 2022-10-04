@@ -12,7 +12,7 @@ public class MarcoRegistro extends JFrame{
 
 	public MarcoRegistro(MarcoLogin marcoLogin) {
 		
-		setBounds(700,300,580,640);
+		setBounds(700,200,580,720);
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
