@@ -183,43 +183,7 @@ public class LaminaRegistro extends JPanel {
 
 				if(validaCampos(lJTextFields)) {					
 					
-					String cadenaRegistro = "insert into usuarios values(";
-					
-					int codigoBD = consultaCodigoUsuario();
-					
-					int codigoNuevoRegistro = (codigoBD + 1);
-					
-					String cadenaCodigo = Integer.toString(codigoNuevoRegistro);
-					
-					String valoresRegistro = "";					
-					
-					Set entrySet = registros.entrySet();
-					
-					Iterator<Object> it = entrySet.iterator();
-					
-					while(it.hasNext()) {
-						
-						Map.Entry me = (Map.Entry) it.next();
-						
-						System.out.println("Número clave treemap "+me.getKey()+" texto "+me.getValue());
-						
-						if((Integer)me.getKey() != 11) {
-							valoresRegistro+=", '"+me.getValue()+"'";	
-						}else {
-							valoresRegistro+=", "+me.getValue();
-						}
-																		
-					}
-					
-					valoresRegistro+=");";
-					
-					String insertSQL = cadenaRegistro + cadenaCodigo + valoresRegistro;
-					
-					System.out.println("El insert quedaría así : ");
-					
-					System.out.println(insertSQL);
-					
-					insertRegistroDB(insertSQL);	
+					insertRegistroDB(registros);	
 					
 				}else {
 					System.err.println("Hay errores en el registro.");
@@ -248,6 +212,12 @@ public class LaminaRegistro extends JPanel {
 		jTextFieldFecha.setText(getFecha(dia, mes, año));
 
 	}
+	
+	/*
+	 * Método que establece los días que tiene un determinado mes dado un año determinado.
+	 * Utilizado para calcular los días que tiene el mes de febrero e indicarlo en la selección
+	 * que el usuario tiene disponible en el JComboBox.
+	 */
 
 	public int getDíasDelMes(int mes, int año) {
 
@@ -267,6 +237,11 @@ public class LaminaRegistro extends JPanel {
 		return diasMes;
 
 	}
+	
+	/*
+	 * Método que utiliza la fecha introducida por el usuario en los JComboBox de la ventana
+	 * y la pasa a String.
+	 */
 
 	public String getFecha(int dias, int mes, int año) {
 
@@ -290,6 +265,10 @@ public class LaminaRegistro extends JPanel {
 		return fecha;
 
 	}
+	
+	/*
+	 * Método que evalúa el correo electrónico introducido por el usuario.
+	 */
 
 	public boolean validaCorreo(String correo) {
 
@@ -383,6 +362,10 @@ public class LaminaRegistro extends JPanel {
 		}
 
 	}
+	
+	/*
+	 * Método que restringe los caracteres que se pueden introducir en ciertos campos.
+	 */
 
 	public boolean validaEntrada(String entrada) {
 
@@ -407,6 +390,10 @@ public class LaminaRegistro extends JPanel {
 
 		return true;
 	}
+	
+	/*
+	 * Método que valída la extensión de la contraseña.
+	 */
 
 	public boolean validaContraseña(String contraseña) {
 
@@ -421,6 +408,10 @@ public class LaminaRegistro extends JPanel {
 		return true;
 
 	}
+	
+	/*
+	 * Método que valída que el teléfono tenga 9 dígitos y que se introduzcan sólo números.
+	 */
 
 	private boolean validaTelefono(String telefono) {
 
@@ -456,6 +447,10 @@ public class LaminaRegistro extends JPanel {
 		}
 
 	}
+	
+	/*
+	 * Método que inicia los componentes de la ventana
+	 */
 
 	private void iniciaComponentes(String[] campos, int inicio, int fin) {
 
@@ -473,6 +468,11 @@ public class LaminaRegistro extends JPanel {
 		}
 
 	}
+	
+	/*
+	 * Método que verifica que los campos introducidos por el usuario se ajustan 
+	 * a las restricciones que debe tener cada tipo de valor.
+	 */
 
 	private boolean validaCampos(TreeMap lJTextFields) {
 
@@ -481,8 +481,6 @@ public class LaminaRegistro extends JPanel {
 		Set entrySet = lJTextFields.entrySet();
 
 		Iterator it = entrySet.iterator();
-
-		System.out.println("Método de validación");
 
 		while (it.hasNext()) {
 
@@ -576,16 +574,53 @@ public class LaminaRegistro extends JPanel {
 
 	}
 
-	public void insertRegistroDB(String insertSQL) {
+	public void insertRegistroDB(TreeMap <Integer, Object> registros) {
+		
+		ArrayList <Object> camposInsert = new ArrayList<>();
+		
+		Set entrySet = registros.entrySet();
+		
+		Iterator<Object> it = entrySet.iterator();
+		
+		int codigoNuevo = (consultaCodigoUsuario()+1);
+		
+		camposInsert.add(codigoNuevo);
+		
+		while(it.hasNext()) {
+		
+			Map.Entry me = (Map.Entry) it.next();
+			
+			camposInsert.add(me.getValue());
+			
+		}
 
 		try {
+			
+			int contador = 0;
+			
 			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "");
 
 			Statement statement = connection.createStatement();
-
-			int insert = statement.executeUpdate(insertSQL);			
 			
-			statement.close();
+			CallableStatement callableStatement = connection.prepareCall("{ call Inserta_usuario(?,?,?,?,?,?,?,?,?,?,?,?)}");		
+			
+			Iterator<Object> ite = camposInsert.iterator();
+			
+			while(ite.hasNext()) {
+				
+				contador++;
+				if(contador == 1 || contador == 12) {
+					
+					callableStatement.setInt(contador, Integer.parseInt(""+ite.next()));
+					
+				}else {
+					callableStatement.setString(contador, (String) ite.next());
+				}
+			}
+
+			callableStatement.execute();			
+			
+			callableStatement.close();
 			
 			connection.close();
 
@@ -602,11 +637,9 @@ public class LaminaRegistro extends JPanel {
 		try {
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "");
 			
-			Statement statement = connection.createStatement();
+			CallableStatement callableStatement = connection.prepareCall("{ call Consulta_codigo}");
 			
-			String consultaCódigo = "select max(usuario_id) from usuarios;";
-			
-			ResultSet resultSet = statement.executeQuery(consultaCódigo);
+			ResultSet resultSet = callableStatement.executeQuery();
 			
 			while(resultSet.next()) {
 				codigo_usuario = resultSet.getInt(1);
@@ -616,7 +649,7 @@ public class LaminaRegistro extends JPanel {
 
 			resultSet.close();
 			
-			statement.close();
+			callableStatement.close();
 			
 			connection.close();			
 			
